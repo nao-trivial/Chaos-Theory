@@ -18,7 +18,7 @@ def calcular_afinidade(perfil1, perfil2):
     afinidade = 0
     for i in range(len(perfil1)):
         afinidade += abs(perfil1[i] - perfil2[i])
-    return afinidade
+    return round(afinidade, 2)  # Arredonda a afinidade para até duas casas decimais
 
 # Parâmetros da equação de Lorenz
 sigma = 10
@@ -75,25 +75,28 @@ while True:
     
     # Gerar número aleatório para decidir se a aresta será formada
     if random.random() < probabilidade:
-        grafo.add_edge(novo_individuo, individuo_mais_proximo)
+        grafo.add_edge(novo_individuo, individuo_mais_proximo, afinidade=menor_afinidade)
     
     # Armazenar evolução das afinidades
     afinidades_iteracao = [calcular_afinidade(novo_individuo, individuo) for individuo in grafo.nodes()]
     evolucao_afinidades.append(afinidades_iteracao)
     
+    # Perguntar ao usuário se deseja ver a evolução do sistema
+    if input("Deseja ver a evolução do sistema? (sim/não): ").lower() != "sim":
+        break
+    
     # Desenhar o grafo
     plt.clf()
     pos = nx.spring_layout(grafo)
     nx.draw(grafo, pos, with_labels=False, node_size=50)
+    # Adicionar labels das arestas com a afinidade
+    labels = {(u, v): f'{d["afinidade"]:.2f}' for u, v, d in grafo.edges(data=True)}  # Arredonda a afinidade para até duas casas decimais
+    nx.draw_networkx_edge_labels(grafo, pos, edge_labels=labels)
     plt.title(f"Iteração {len(evolucao_afinidades)}, Caos: {caos:.2f}")
-    plt.pause(3)
+    plt.pause(0.001)
     
     # Aguardar um curto período de tempo entre iterações
-    time.sleep(1)
-
-    # Verificar se a simulação deve ser encerrada
-    if len(evolucao_afinidades) >= 1000:
-        break
+    time.sleep(0.1)
 
 # Exibir gráfico da evolução do caos
 plt.figure()
