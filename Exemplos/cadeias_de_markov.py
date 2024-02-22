@@ -1,63 +1,55 @@
 import numpy as np
 
-class MarkovChain(object):
-    # Inicializa a classe MarkovChain
-    def __init__(self, transition_matrix, states):
-        self.transition_matrix = np.atleast_2d(transition_matrix)
-        self.states = states
+# Definição da classe CadeiaDeMarkov
+class CadeiaDeMarkov(object):
+    # Inicializa a classe CadeiaDeMarkov
+    def __init__(self, matriz_transicao, estados):
+        # Transforma a matriz de transiçao em um array 2D
+        self.matriz_transicao = np.atleast_2d(matriz_transicao)
 
+        # Lista dos estados possiveis
+        self.estados = estados
 
-"""# Importando a biblioteca numpy
-import numpy as np
+        # Dicionario para mapear cada estado ao seu indice na matriz de transição
+        self.dicionario_indices = {self.estados[indice]: indice for indice in range(len(self.estados))}
 
-# Definindo a classe MarkovChain
-class MarkovChain(object):
-    def __init__(self, transition_matrix, states):
-        """
-       # Inicializa a classe MarkovChain
-        """
-        # Converte a matriz de transição para um array 2D
-        self.transition_matrix = np.atleast_2d(transition_matrix)
-        # Lista dos possíveis estados
-        self.states = states
-        # Dicionário para mapear cada estado para seu índice na matriz de transição
-        self.index_dict = {self.states[index]: index for index in range(len(self.states))}
-        # Dicionário para mapear cada índice para seu estado correspondente
-        self.state_dict = {index: self.states[index] for index in range(len(self.states))}
+        # Dicionario para mapear cada indice ao seu estado correspondente
+        self.dicionario_estados = {indice: self.estados[indice] for indice in range(len(self.estados))}
 
-    def next_state(self, current_state):
-        """
-        #Retorna o estado do próximo passo dado o estado atual.
-        """
-        # Escolhe o próximo estado de acordo com as probabilidades da matriz de transição
-        return np.random.choice(
-         self.states, 
-         p=self.transition_matrix[self.index_dict[current_state], :]
-        )
+    # Retorna o espaço do proximo passo dado o estado atual
+    def proximo_estado(self, estado_atual):
+        # Escolhe o proximo estado de acordo com as probabilidades da matriz de transiçao
+        return np.random.choice(self.estados, p=self.matriz_transicao[self.dicionario_indices[estado_atual], :])
+    
+    # Gera a proxima sequencia de estados futuros
+    def gerar_estados(self, estado_atual, numero=10):
+        # Lista para armazenar a sequencia de estados futuros
+        estados_futuros = []
+        for i in range(numero):
+            # Calcula o proximo estado
+            proximo_estado = self.proximo_estado(estado_atual)
+            
+            # Adiciona o proximo estado a lista
+            estados_futuros.append(proximo_estado)
 
-    def generate_states(self, current_state, no=10):
-        """
-        #Gera a próxima sequência de estados
-        """
-        # Lista para armazenar a sequência de estados futuros
-        future_states = []
-        for i in range(no):
-            # Calcula o próximo estado
-            next_state = self.next_state(current_state)
-            # Adiciona o próximo estado à lista
-            future_states.append(next_state)
             # Atualiza o estado atual
-            current_state = next_state
-        # Retorna a lista de estados futuros
-        return future_states
+            estado_atual = proximo_estado
 
-# Matriz de transição
-transition_matrix = [[0.8, 0.2],
-                     [0.2, 0.8]]
+        # Estados futuros
+        return estados_futuros
 
-# Cria uma instância da classe MarkovChain
-markov_chain = MarkovChain(transition_matrix=transition_matrix, states=['Chuva', 'Sol'])
+# Exemplo de uso
 
-# Gera a sequência de estados
-markov_chain.generate_states(current_state='Chuva', no=10)
-"""
+# Matriz de transiçao
+matriz_transicao = [[0.8, 0.2], [0.2, 0.8]]
+
+# Cria uma instancia da classe CadeiaDeMarkov
+cadeia_de_markov = CadeiaDeMarkov(matriz_transicao = matriz_transicao, 
+                                  estados = ['Chuva', 'Sol']) 
+
+# Gera a sequencia de estados
+x = cadeia_de_markov.gerar_estados(estado_atual='Chuva', numero=5)
+
+print(x)
+
+
