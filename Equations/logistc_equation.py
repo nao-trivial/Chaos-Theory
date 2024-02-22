@@ -1,8 +1,6 @@
 import matplotlib.pyplot as plt
 
-'''import matplotlib.pyplot as plt
-
-class EquacaoLogisticaDiscreta:
+'''class EquacaoLogisticaDiscreta:
     def __init__(self, r, x_inicial, iteracoes):
         self.r = r
         self.x = x_inicial
