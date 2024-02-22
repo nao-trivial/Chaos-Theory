@@ -1,5 +1,6 @@
-'''import numpy as np
-import matplotlib.pyplot as plt
+import numpy as np
+
+'''import matplotlib.pyplot as plt
 
 class IntegralEstocastica:
     def __init__(self, mu, sigma, X0, T, dt):
