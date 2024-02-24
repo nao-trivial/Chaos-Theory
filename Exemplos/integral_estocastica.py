@@ -16,7 +16,7 @@ class IntegralEstocastica:
 
     def resolver(self):
         for i in range(1, len(self.t)):
-            self.x[i] = self.x[i-1] + self.mu*self.x[i-1]*self.dt + self.sigma*self.x[i-1]*(self.W[i]-self.W[i-1])
+            self.x[i] = self.x[i-1] + self.mu*self.x[i-1]*self.dt + self.sigma*self.x[i-1]*self.W[i]*np.sqrt(self.dt)
         return self.t, self.x
     
 # Parametros
@@ -29,7 +29,7 @@ dt = 0.01
 # Cria uma instancia da classe IntegralEstocastica
 integral_estocastica = IntegralEstocastica(mu=mu, sigma=sigma, x0=x0, T=t_grande, dt=dt)
 
-# Resolve a equaçao diferencial estocastica e plota o resultado
+# Resolve a equação diferencial estocástica e plota o resultado
 t, x = integral_estocastica.resolver()
 plt.plot(t, x)
 plt.title('Movimento Browniano Geometrico')
