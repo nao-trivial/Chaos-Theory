@@ -1,6 +1,6 @@
 import random
-import time
 import networkx as nx
+import matplotlib.pyplot as plt
 
 class SimuladorPerfil:
     def __init__(self):
@@ -43,30 +43,19 @@ class SimuladorPerfil:
         return max(0, 1 - afinidade / 50)
 
     def simular(self):
-        sigma = 10
-        rho = 28
-        beta = 8/3
-        dt = 0.01
-        x, y, z = 0.1, 0.1, 0.1
-
         while True:
-            dx = sigma * (y - x) * dt
-            dy = (x * (rho - z) - y) * dt
-            dz = (x * y - beta * z) * dt
+            caos = random.randint(0, 5)
+            tipo = random.choice(['Realista', 'Investigativo', 'Artístico', 'Social', 'Empreendedor', 'Convencional'])
+            perfil = self.criar_perfil_por_tipo(tipo, caos)
+            self.grafo.add_node(self.contador_individuos, perfil=perfil, tipo=tipo, caos=caos)
+            self.contador_individuos += 1
 
-            x += dx
-            y += dy
-            z += dz
+            if self.contador_individuos % 10 == 0:
+                # Mostra o grafo a cada 10 indivíduos
+                nx.draw(self.grafo, with_labels=True, font_weight='bold')
+                plt.show()
 
-            # Atualize o grafo com os perfis e suas afinidades
-            # (você pode adicionar essa parte aqui)
-
-            # Registre a evolução das afinidades e do caos
-            # (você pode adicionar essa parte aqui)
-
-            # Aguarde um intervalo de tempo antes de calcular a próxima iteração
-            time.sleep(0.1)
-
-if __name__ == "__main__":
-    simulador = SimuladorPerfil()
-    simulador.simular()
+                # Pergunta ao usuário se deseja inserir um novo indivíduo
+                resposta = input("Deseja inserir um novo indivíduo? (S/N): ")
+                if resposta.lower() != 's':
+                    break
