@@ -1,5 +1,6 @@
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
+import numpy as np
 
 class PerfilClusterizer:
     def __init__(self, perfis):
@@ -9,9 +10,9 @@ class PerfilClusterizer:
         self.kmeans = None
 
     def calcular_caos(self):
-        # Implemente a lógica para calcular o nível de caos com base nos perfis
-        # (você pode adicionar essa parte aqui)
-        pass
+        # Calcula o nível de caos como a média das diferenças entre os valores dos perfis
+        diffs = np.diff(self.perfis, axis=0)
+        self.caos_levels = np.mean(np.abs(diffs), axis=0)
 
     def clusterizar(self, n_clusters):
         # Padronize os perfis
@@ -39,7 +40,7 @@ if __name__ == "__main__":
     ]
 
     clusterizer = PerfilClusterizer(perfis)
-    clusterizer.calcular_caos()  # Implemente essa função
+    clusterizer.calcular_caos()
     clusterizer.clusterizar(n_clusters=3)
 
     # Exemplo: obter o setor de um perfil específico
