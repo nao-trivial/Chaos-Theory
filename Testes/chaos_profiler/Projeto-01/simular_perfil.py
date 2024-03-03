@@ -58,4 +58,7 @@ class SimuladorPerfil:
                 # Pergunta ao usuário se deseja inserir um novo indivíduo
                 resposta = input("Deseja inserir um novo indivíduo? (S/N): ")
                 if resposta.lower() != 's':
+                    tipo = input("Digite o tipo de perfil (Realista, Investigativo, Artístico, Social, Empreendedor, Convencional): ")
+                    self.simulador.adicionar_perfil(tipo)
+                else:
                     break
