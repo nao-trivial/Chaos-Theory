@@ -74,6 +74,53 @@ class EspacoProximo:
             conjunto_relacionado = {y for y in self.X if self.relacao_proxima(elemento, {y})}
             print(f"{elemento} v {conjunto_relacionado}")
 
+    def verificar_continuidade(self, f, x):
+        """
+        Verifica se a função f é contínua em x, de acordo com a definição de continuidade.
+
+        :param f: Função f: X -> Y
+        :param x: Ponto x em X
+        :return: True se f é contínua em x, False caso contrário
+        """
+        for conjunto_aberto_A in self.abertos_em_Y():
+            if f(x) in conjunto_aberto_A:
+                for conjunto_aberto_B in self.abertos_em_X():
+                    if x in conjunto_aberto_B and set(f(conjunto_aberto_B)).issubset(conjunto_aberto_A):
+                        return True
+        return False
+
+    def verificar_continuidade_global(self, f):
+        """
+        Verifica se a função f é contínua em todos os pontos de X.
+
+        :param f: Função f: X -> Y
+        :return: True se f é contínua globalmente, False caso contrário
+        """
+        for ponto_x in self.X:
+            if not self.verificar_continuidade(f, ponto_x):
+                return False
+        return True
+
+    # (código existente...)
+
+    def abertos_em_Y(self):
+        """
+        Retorna uma lista de conjuntos abertos em Y.
+
+        :return: Lista de conjuntos abertos em Y
+        """
+        # Implemente a lógica para obter conjuntos abertos em Y
+        pass
+
+    def abertos_em_X(self):
+        """
+        Retorna uma lista de conjuntos abertos em X.
+
+        :return: Lista de conjuntos abertos em X
+        """
+        # Implemente a lógica para obter conjuntos abertos em X
+        pass
+
 # Exemplo de uso
 conjunto_X = {1, 2, 3, 4, 5}
 relacao_proxima = lambda x, A: x in A  # Exemplo simples de relação próxima
