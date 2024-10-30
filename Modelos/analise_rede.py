@@ -79,9 +79,3 @@ class AnaliseRedeSocial:
         print("\nTabela de Afinidades:")
         print(self.gerar_tabela_afinidades())
 
-# Exemplo de uso
-rede_social = RedeSocial()  # Supondo que a classe RedeSocial está definida
-analise = AnaliseRedeSocial(rede_social)
-
-# Este comando gera o relatório com as métricas calculadas
-analise.gerar_relatorio()

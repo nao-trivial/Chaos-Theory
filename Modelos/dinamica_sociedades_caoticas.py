@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import random
 from matplotlib.animation import FuncAnimation
+from analise_rede import AnaliseRedeSocial
 
 class RedeSocial:
     def __init__(self):
@@ -73,6 +74,7 @@ class RedeSocial:
     def visualizar_rede(self, i):
         with self.lock:
             if self.houve_mudanca:
+                # Atualiza a visualização da rede
                 self.ax_grafo.clear()
                 pos = nx.spring_layout(self.grafo, seed=42)
                 edges = self.grafo.edges(data=True)
@@ -112,26 +114,24 @@ class RedeSocial:
         )
         tabela.scale(1, 1.5)
 
-# Cria a rede social e inicializa os parâmetros de simulação
+# Instância da Rede Social
 rede_social = RedeSocial()
 
-# Intervalo de criação de indivíduos e de atualização das afinidades
+# Parâmetro para o intervalo de criação de indivíduos (em segundos)
 intervalo_criacao = 5
-intervalo_atualizacao_afinidades = 2
 
-# Thread para adicionar novos indivíduos progressivamente
+# Iniciando a adição progressiva de indivíduos em uma thread separada
 thread_criacao = threading.Thread(target=rede_social.iniciar_adicao_progressiva, args=(intervalo_criacao,))
 thread_criacao.start()
 
-# Thread para atualizar as afinidades periodicamente
-thread_atualizacao = threading.Thread(target=rede_social.iniciar_atualizacao_afinidades, args=(intervalo_atualizacao_afinidades,))
-thread_atualizacao.start()
-
-# Animação da rede social
+# Configuração da animação da visualização da rede
 ani = FuncAnimation(rede_social.fig, rede_social.visualizar_rede, interval=1000, cache_frame_data=False, save_count=50)
 plt.show()
 
-# Para a simulação ao fechar a janela
+# Finalizando a criação de indivíduos
 rede_social.running = False
 thread_criacao.join()
-thread_atualizacao.join()
+
+# Análise da Rede e Geração do Relatório Final
+analise = AnaliseRedeSocial(rede_social)
+analise.gerar_relatorio()
