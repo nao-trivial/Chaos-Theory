@@ -101,8 +101,6 @@ class EspacoProximo:
                 return False
         return True
 
-    # (código existente...)
-
     def abertos_em_Y(self):
         """
         Retorna uma lista de conjuntos abertos em Y.
@@ -121,21 +119,3 @@ class EspacoProximo:
         # Implemente a lógica para obter conjuntos abertos em X
         pass
 
-# Exemplo de uso
-conjunto_X = {1, 2, 3, 4, 5}
-relacao_proxima = lambda x, A: x in A  # Exemplo simples de relação próxima
-
-espaco_proximo = EspacoProximo(conjunto_X, relacao_proxima)
-
-# Verificando as propriedades
-x = 1
-A = {1, 2, 3}
-B = {3, 4, 5}
-
-print("Propriedade 1:", espaco_proximo.propriedade_1(x, A))
-print("Propriedade 2:", espaco_proximo.propriedade_2(x, A))
-print("Propriedade 3:", espaco_proximo.propriedade_3(x, A, B))
-print("Propriedade 4:", espaco_proximo.propriedade_4(x, A, B))
-
-# Imprimindo informações sobre o espaço próximo
-espaco_proximo.imprimir_informacoes()
