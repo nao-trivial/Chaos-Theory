@@ -32,9 +32,10 @@ plt.grid()
 # Exibir o gráfico
 plt.show()
 
-Exemplo de uso
+# Exemplo de uso
 
-def f(x): return x**2 - 1
+def f(x): 
+   return x**2 - 1
 
 plot_evolution(f, x0=0.75, num_iter=20, title="Evolução Temporal com Repulsor (f(x) = x² - 1)")
 
