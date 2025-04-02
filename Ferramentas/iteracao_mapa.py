@@ -1,16 +1,14 @@
-import numpy as np
-import matplotlib.pyplot as plt
+import numpy as np import matplotlib.pyplot as plt
 
-# Definição da função de iteração
-def f(x):
-    return x**2 - 1
+def plot_evolution(f, x0, num_iter, title="Evolução Temporal"): """ Plota a evolução temporal de uma função iterativa.
 
-# Configuração da iteração
-x0 = 0.75  # Valor inicial (próximo ao repulsor)
-num_iter = 20  # Número de iterações
-
-# Listas para armazenar a evolução temporal
-tempo = np.arange(num_iter + 1)  # Passo do tempo (0, 1, 2, ...)
+Parâmetros:
+    f (function): Função iterativa f(x)
+    x0 (float): Condição inicial
+    num_iter (int): Número de iterações
+    title (str): Título do gráfico
+"""
+tempo = np.arange(num_iter + 1)  # Passos de tempo (0, 1, 2, ...)
 x_values = [x0]
 
 # Calculando a sequência iterativa
@@ -26,12 +24,17 @@ plt.plot(tempo, x_values, 'bo-', label="Evolução de x", markersize=6)
 # Configuração do gráfico
 plt.xlabel("Tempo (iterações)")
 plt.ylabel("Valor de x")
-plt.title("Evolução Temporal com Repulsor (f(x) = x² - 1)")
+plt.title(title)
 plt.axhline(y=0, color='gray', linestyle='--', label="Eixo x = 0")
-plt.axhline(y=-1, color='g', linestyle='--', label="Atrator (x = -1)")
-plt.axhline(y=1, color='r', linestyle='--', label="Repulsor (x = 1)")
 plt.legend()
 plt.grid()
 
 # Exibir o gráfico
 plt.show()
+
+Exemplo de uso
+
+def f(x): return x**2 - 1
+
+plot_evolution(f, x0=0.75, num_iter=20, title="Evolução Temporal com Repulsor (f(x) = x² - 1)")
+
