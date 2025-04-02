@@ -8,29 +8,29 @@ Parâmetros:
     num_iter (int): Número de iterações
     title (str): Título do gráfico
 """
-tempo = np.arange(num_iter + 1)  # Passos de tempo (0, 1, 2, ...)
-x_values = [x0]
+   tempo = np.arange(num_iter + 1)  # Passos de tempo (0, 1, 2, ...)
+   x_values = [x0]
 
 # Calculando a sequência iterativa
-x = x0
-for _ in range(num_iter):
-    x = f(x)
-    x_values.append(x)
+   x = x0
+   for _ in range(num_iter):
+       x = f(x)
+       x_values.append(x)
 
-# Criando o gráfico de evolução temporal
-plt.figure(figsize=(10, 6))
-plt.plot(tempo, x_values, 'bo-', label="Evolução de x", markersize=6)
+   # Criando o gráfico de evolução temporal
+   plt.figure(figsize=(10, 6))
+   plt.plot(tempo, x_values, 'bo-', label="Evolução de x", markersize=6)
 
-# Configuração do gráfico
-plt.xlabel("Tempo (iterações)")
-plt.ylabel("Valor de x")
-plt.title(title)
-plt.axhline(y=0, color='gray', linestyle='--', label="Eixo x = 0")
-plt.legend()
-plt.grid()
+   # Configuração do gráfico
+   plt.xlabel("Tempo (iterações)")
+   plt.ylabel("Valor de x")
+   plt.title(title)
+   plt.axhline(y=0, color='gray', linestyle='--', label="Eixo x = 0")
+   plt.legend()
+   plt.grid()
 
-# Exibir o gráfico
-plt.show()
+   # Exibir o gráfico
+   plt.show()
 
 # Exemplo de uso
 
