@@ -1,0 +1,474 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[brazil]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{calc, arrows.meta, positioning, shapes, graphs, graphdrawing}
+\usegdlibrary{force, trees}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\geometry{a4paper, margin=2.5cm}
+
+% Definindo ambientes matemáticos
+\newtheorem{definition}{Definição}
+\newtheorem{theorem}{Teorema}
+\newtheorem{lemma}{Lema}
+\newtheorem{corollary}{Corolário}
+\newtheorem{example}{Exemplo}
+\newtheorem{remark}{Observação}
+\newtheorem{proposition}{Proposição}
+
+% Configurações para códigos Python
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{green!60!black},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    frame=single,
+    breaklines=true,
+    captionpos=b
+}
+
+\title{Análise Matemática de Redes Sociais Emocionais: \\
+       Fundamentos Teóricos e Conexões com a Dinâmica Emocional}
+\author{Integrando Teoria de Redes, Cálculo Vetorial e Psicologia Matemática}
+\date{Versão 1.0 - Modelo Unificado}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Este artigo apresenta uma formalização matemática completa para análise de redes sociais no contexto da dinâmica emocional. Desenvolvemos os fundamentos teóricos por trás das métricas de análise de redes implementadas computacionalmente, estabelecendo conexões profundas com o modelo de equações emocionais. Demonstramos como conceitos como centralidade, modularidade e coeficiente de agrupamento emergem naturalmente da dinâmica emocional coletiva, e como a estrutura de rede afeta a propagação e estabilização de estados emocionais.
+\end{abstract}
+
+\tableofcontents
+
+\section{Introdução: Redes Sociais como Substrato da Dinâmica Emocional}
+
+A teoria desenvolvida até agora focou na dinâmica emocional individual e de casais. Agora, expandimos para o contexto coletivo: redes sociais. O código Python apresentado implementa análise de redes sociais com pesos emocionais (afinidades), fornecendo métricas quantitativas para entender como estruturas sociais influenciam e são influenciadas pela dinâmica emocional.
+
+\begin{center}
+\begin{tikzpicture}[scale=1.2]
+  % Rede social com pesos emocionais
+  \node[circle, draw=red, fill=red!20] (A) at (0,0) {A};
+  \node[circle, draw=blue, fill=blue!20] (B) at (2,1) {B};
+  \node[circle, draw=green, fill=green!20] (C) at (2,-1) {C};
+  \node[circle, draw=orange, fill=orange!20] (D) at (4,0) {D};
+  \node[circle, draw=purple, fill=purple!20] (E) at (6,1) {E};
+  \node[circle, draw=brown, fill=brown!20] (F) at (6,-1) {F};
+  
+  % Arestas com pesos
+  \draw[thick, red] (A) -- node[above, sloped] {0.8} (B);
+  \draw[thick, blue] (A) -- node[below, sloped] {0.3} (C);
+  \draw[thick, green] (B) -- node[right] {0.6} (C);
+  \draw[thick, orange] (B) -- node[above, sloped] {0.9} (D);
+  \draw[thick, purple] (C) -- node[below, sloped] {0.4} (D);
+  \draw[thick, brown] (D) -- node[above, sloped] {0.7} (E);
+  \draw[thick, red] (D) -- node[below, sloped] {0.5} (F);
+  \draw[thick, blue] (E) -- node[right] {0.8} (F);
+  
+  % Estado emocional de cada nó
+  \node[above=0.1cm of A] {$x_A = (2.1, -0.3)$};
+  \node[above=0.1cm of B] {$x_B = (1.5, 0.8)$};
+  \node[below=0.1cm of C] {$x_C = (-0.5, 1.2)$};
+  \node[above=0.1cm of D] {$x_D = (0.3, -0.7)$};
+  \node[above=0.1cm of E] {$x_E = (1.8, 0.5)$};
+  \node[below=0.1cm of F] {$x_F = (-1.2, -0.9)$};
+\end{tikzpicture}
+\end{center}
+
+\section{Fundamentos Matemáticos da Análise de Redes}
+
+\subsection{Definição Formal de Rede Social Ponderada}
+
+\begin{definition}[Grafo Social Ponderado]
+Uma rede social é modelada como um grafo não-direcionado ponderado $G = (V, E, w)$ onde:
+\begin{itemize}
+\item $V = \{v_1, v_2, \dots, v_n\}$ é o conjunto de vértices (indivíduos)
+\item $E \subseteq V \times V$ é o conjunto de arestas (relacionamentos)
+\item $w: E \to [-1, 1]$ é a função peso que associa a cada aresta uma afinidade emocional
+\end{itemize}
+\end{definition}
+
+\begin{definition}[Matriz de Adjacência Ponderada]
+A estrutura da rede é representada pela matriz $A \in \mathbb{R}^{n \times n}$ onde:
+\[
+A_{ij} = 
+\begin{cases}
+w(v_i, v_j) & \text{se } (v_i, v_j) \in E \\
+0 & \text{caso contrário}
+\end{cases}
+\]
+Como o grafo é não-direcionado, $A$ é simétrica: $A_{ij} = A_{ji}$.
+\end{definition}
+
+\subsection{Métrica 1: Coeficiente de Agrupamento}
+
+\begin{definition}[Coeficiente de Agrupamento Local]
+Para um vértice $v_i$ com grau $k_i \geq 2$, o coeficiente de agrupamento local é:
+\[
+C_i = \frac{2 \cdot T_i}{k_i(k_i - 1)}
+\]
+onde $T_i$ é o número de triângulos (3-cliques) incidentes a $v_i$.
+\end{definition}
+
+\begin{definition}[Coeficiente de Agrupamento Global]
+O coeficiente de agrupamento médio da rede é:
+\[
+C = \frac{1}{n} \sum_{i=1}^n C_i
+\]
+\end{definition}
+
+\begin{theorem}[Interpretação Emocional do Agrupamento]
+Em uma rede emocional, alto coeficiente de agrupamento indica que:
+\begin{enumerate}
+\item Amigos de um indivíduo tendem a ser amigos entre si
+\item Formação de "câmaras de eco" emocionais
+\item Maior resiliência local a perturbações externas
+\end{enumerate}
+\end{theorem}
+
+\subsection{Métrica 2: Centralidades}
+
+\begin{definition}[Centralidade de Grau]
+A centralidade de grau do vértice $v_i$ é:
+\[
+C_D(i) = \frac{k_i}{n-1}
+\]
+onde $k_i = \sum_{j=1}^n \mathbf{1}_{\{A_{ij} \neq 0\}}$ é o grau do vértice.
+\end{definition}
+
+\begin{definition}[Centralidade de Intermediação]
+Para vértice $v_i$:
+\[
+C_B(i) = \sum_{s \neq i \neq t} \frac{\sigma_{st}(i)}{\sigma_{st}}
+\]
+onde $\sigma_{st}$ é o número total de caminhos mais curtos de $s$ a $t$, e $\sigma_{st}(i)$ é o número desses que passam por $i$.
+\end{definition}
+
+\begin{definition}[Centralidade de Proximidade]
+Para vértice $v_i$:
+\[
+C_C(i) = \frac{n-1}{\sum_{j \neq i} d(i,j)}
+\]
+onde $d(i,j)$ é a distância mais curta (em número de arestas) entre $i$ e $j$.
+\end{definition}
+
+\subsection{Métrica 3: Modularidade}
+
+\begin{definition}[Modularidade de Newman-Girvan]
+Dada uma partição $P = \{C_1, C_2, \dots, C_k\}$ dos vértices:
+\[
+Q(P) = \frac{1}{2m} \sum_{i,j} \left[ A_{ij} - \frac{k_i k_j}{2m} \right] \delta(c_i, c_j)
+\]
+onde $m = \frac{1}{2} \sum_{i,j} A_{ij}$, $k_i = \sum_j A_{ij}$, e $\delta(c_i, c_j) = 1$ se $v_i$ e $v_j$ estão no mesmo grupo.
+\end{definition}
+
+\begin{theorem}[Interpretação Comunitária]
+Alta modularidade indica:
+\begin{enumerate}
+\item Estrutura comunitária bem definida
+\item Fortes laços intra-comunidade, fracos inter-comunidade
+\item Possível segregação emocional ou cultural
+\end{enumerate}
+\end{theorem}
+
+\section{Conexão com a Dinâmica Emocional}
+
+\subsection{Modelo de Dinâmica Emocional em Rede}
+
+\begin{definition}[Sistema Dinâmico em Rede]
+Cada indivíduo $i$ tem estado emocional $x_i(t) \in \mathbb{R}^d$. A dinâmica coletiva é:
+\[
+\frac{dx_i}{dt} = A_i x_i + \sum_{j=1}^n w_{ij} \Gamma(x_j - x_i) - D_i(x_i)
+\]
+onde:
+\begin{itemize}
+\item $A_i$ é a matriz de auto-influência
+\item $w_{ij} = A_{ij}$ é o peso da conexão
+\item $\Gamma: \mathbb{R}^d \to \mathbb{R}^d$ é função de acoplamento
+\item $D_i(x_i) = \varepsilon_i (x_i - \Pi_{\mathcal{V}_i}(x_i))$ é a meditação
+\end{itemize}
+\end{definition}
+
+\begin{theorem}[Estabilidade da Rede Emocional]
+O sistema em rede é estável se:
+\[
+\max_i \|A_i - \varepsilon_i I\| + \max_i \sum_{j=1}^n |w_{ij}| \cdot \|\Gamma\| < 0
+\]
+\end{theorem}
+
+\subsection{Propagação de Emoções como Processo de Difusão}
+
+\begin{definition}[Operador Laplaciano da Rede]
+O Laplaciano ponderado $L \in \mathbb{R}^{n \times n}$ é:
+\[
+L_{ij} = 
+\begin{cases}
+\sum_{k=1}^n w_{ik} & \text{se } i = j \\
+-w_{ij} & \text{se } i \neq j \text{ e } (i,j) \in E \\
+0 & \text{caso contrário}
+\end{cases}
+\]
+\end{definition}
+
+\begin{theorem}[Equação de Difusão Emocional]
+A dinâmica linearizada é:
+\[
+\frac{dX}{dt} = -L X + F(t)
+\]
+onde $X = [x_1, x_2, \dots, x_n]^T$ e $F(t)$ são forças externas.
+\end{theorem}
+
+\begin{proposition}[Velocidade de Propagação]
+O tempo característico de propagação é inversamente proporcional ao gap espectral de $L$:
+\[
+\tau \sim \frac{1}{\lambda_2(L)}
+\]
+onde $\lambda_2(L)$ é o segundo menor autovalor de $L$ (conectividade algébrica).
+\end{proposition}
+
+\section{Implementação Matemática Detalhada}
+
+\subsection{Algoritmo de Cálculo de Centralidade}
+
+\begin{algorithm}[H]
+\caption{Cálculo de Centralidades - Versão Matemática}
+\begin{algorithmic}[1]
+\Require Grafo $G = (V, E, w)$ com $n = |V|$
+\Ensure Centralidades $C_D, C_B, C_C$
+\State Inicializar $C_D \gets \text{vetor zero}(n)$, $C_B \gets \text{vetor zero}(n)$, $C_C \gets \text{vetor zero}(n)$
+\For{$i = 1$ to $n$}
+    \State $k_i \gets \sum_{j=1}^n \mathbf{1}_{\{A_{ij} \neq 0\}}$ \Comment{Grau}
+    \State $C_D[i] \gets \frac{k_i}{n-1}$ \Comment{Centralidade de grau}
+\EndFor
+\For{$s = 1$ to $n$}
+    \State Calcular todos os caminhos mais curtos de $s$ para outros vértices
+    \For{$t = 1$ to $n$}
+        \If{$s \neq t$}
+            \State $\sigma_{st} \gets$ número de caminhos mais curtos $s \to t$
+            \For{cada vértice $v$ no caminho}
+                \State $C_B[v] \gets C_B[v] + \frac{\sigma_{st}(v)}{\sigma_{st}}$
+            \EndFor
+        \EndIf
+    \EndFor
+\EndFor
+\For{$i = 1$ to $n$}
+    \State Calcular soma das distâncias $d_{\text{total}} = \sum_{j \neq i} d(i,j)$
+    \State $C_C[i] \gets \frac{n-1}{d_{\text{total}}}$
+\EndFor
+\State \Return $C_D, C_B, C_C$
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Formalização do Código Python}
+
+O código Python implementa as seguintes funções matemáticas:
+
+\begin{lstlisting}[caption={Implementação Matemática das Métricas}, label=lst:metrics]
+# Matematicamente, estas funções calculam:
+
+def calcular_coeficiente_agrupamento(G):
+    """Calcula C = 1/n Σ_i C_i onde C_i = 2T_i/(k_i(k_i-1))"""
+    return sum(2*T_i/(k_i*(k_i-1)) for i in range(n) if k_i>1) / n
+
+def calcular_centralidade_grau(G):
+    """Calcula C_D(i) = k_i/(n-1) para cada vértice i"""
+    return {i: G.degree(i)/(n-1) for i in G.nodes}
+
+def calcular_modularidade(G, communities):
+    """Calcula Q = 1/(2m) Σ_ij [A_ij - k_i k_j/(2m)] δ(c_i, c_j)"""
+    m = G.number_of_edges()
+    k = dict(G.degree())
+    Q = 0
+    for i, j in G.edges():
+        if communities[i] == communities[j]:
+            Q += 1 - k[i]*k[j]/(2*m)
+        else:
+            Q += 0 - k[i]*k[j]/(2*m)
+    return Q/(2*m)
+\end{lstlisting}
+
+\section{Teoremas e Proposições sobre Redes Emocionais}
+
+\subsection{Teorema da Influência Social}
+
+\begin{theorem}[Limite Superior da Influência]
+Em uma rede emocional com $n$ indivíduos, a influência total que um indivíduo $i$ pode exercer é limitada por:
+\[
+I_{\max}(i) \leq \sqrt{C_B(i) \cdot \sum_{j=1}^n w_{ij}^2}
+\]
+\end{theorem}
+
+\begin{proof}
+Pela desigualdade de Cauchy-Schwarz:
+\[
+\left(\sum_{j=1}^n w_{ij} \Delta x_j\right)^2 \leq \left(\sum_{j=1}^n w_{ij}^2\right) \left(\sum_{j=1}^n (\Delta x_j)^2\right)
+\]
+A centralidade de intermediação $C_B(i)$ limita $\sum_j (\Delta x_j)^2$.
+\end{proof}
+
+\subsection{Teorema da Estabilidade Comunitária}
+
+\begin{theorem}[Estabilidade de Comunidades]
+Dada uma partição $P = \{C_1, \dots, C_k\}$ com modularidade $Q(P)$, a taxa de mudança de afiliação comunitária é:
+\[
+\frac{dp_{ij}}{dt} = \alpha(Q_i - Q_j) - \beta p_{ij}
+\]
+onde $p_{ij}$ é a probabilidade de $i$ mudar para comunidade $j$, $Q_i$ é a modularidade local percebida.
+\end{theorem}
+
+\section{Exemplo Numérico Completo}
+
+\subsection{Rede com 6 Indivíduos}
+
+Considere a rede social com matriz de adjacência:
+\[
+A = \begin{pmatrix}
+0 & 0.8 & 0.3 & 0 & 0 & 0 \\
+0.8 & 0 & 0.6 & 0.9 & 0 & 0 \\
+0.3 & 0.6 & 0 & 0.4 & 0 & 0 \\
+0 & 0.9 & 0.4 & 0 & 0.7 & 0.5 \\
+0 & 0 & 0 & 0.7 & 0 & 0.8 \\
+0 & 0 & 0 & 0.5 & 0.8 & 0
+\end{pmatrix}
+\]
+
+\begin{enumerate}
+\item \textbf{Coeficiente de agrupamento}:
+Para vértice 1: $k_1 = 2$, triângulos: apenas (1,2,3) se existe, precisamos verificar
+$A_{12}A_{23}A_{13} = 0.8 \times 0.6 \times 0.3 > 0$, logo há 1 triângulo.
+$C_1 = \frac{2 \times 1}{2 \times 1} = 1$
+
+\item \textbf{Centralidade de grau}:
+$C_D(1) = \frac{2}{5} = 0.4$
+
+\item \textbf{Modularidade}:
+Comunidades naturais: $\{\{1,2,3\}, \{4,5,6\}\}$
+\[
+Q = \frac{1}{2m} \sum_{i,j} \left[A_{ij} - \frac{k_i k_j}{2m}\right] \delta(c_i, c_j)
+\]
+\end{enumerate}
+
+\section{Integração com o Modelo PGDE}
+
+\subsection{Extensão para Múltiplos Agentes}
+
+O modelo original do PGDE para casais se estende para redes como:
+
+\begin{definition}[PGDE em Rede]
+Para cada indivíduo $i$:
+\[
+\frac{dx_i}{dt} = a_i x_i + \sum_{j \in N(i)} b_{ij} I_{ij}(t) - \varepsilon_i(x_i - \Pi_{\mathcal{V}_i}(x_i))
+\]
+onde:
+\begin{itemize}
+\item $N(i)$ são os vizinhos de $i$ na rede
+\item $I_{ij}(t)$ é a interação com $j$ no tempo $t$
+\item $b_{ij} = w_{ij} \cdot \beta_{ij}$ combina afinidade estrutural e susceptibilidade
+\end{itemize}
+\end{definition}
+
+\subsection{Matriz do Sistema Completo}
+
+O sistema completo pode ser escrito como:
+\[
+\frac{dX}{dt} = (A_{\text{diag}} + B \circ W) X + F(t) - D(X)
+\]
+onde:
+\begin{itemize}
+\item $A_{\text{diag}} = \text{diag}(a_1, \dots, a_n)$
+\item $B = [b_{ij}]$ matriz de susceptibilidade
+\item $W = [w_{ij}]$ matriz de adjacência ponderada
+\item $\circ$ denota produto de Hadamard (elemento a elemento)
+\item $D(X) = [\varepsilon_i(x_i - \Pi_{\mathcal{V}_i}(x_i))]$
+\end{itemize}
+
+\section{Conclusão e Aplicações}
+
+\subsection{Resumo das Conexões Matemáticas}
+
+\begin{table}[H]
+\centering
+\caption{Conexões entre Métricas de Rede e Conceitos do PGDE}
+\begin{tabular}{p{4cm}p{5cm}p{5cm}}
+\toprule
+\textbf{Métrica de Rede} & \textbf{Interpretação PGDE} & \textbf{Implicação Dinâmica} \\
+\midrule
+Coeficiente de Agrupamento & Força dos ciclos emocionais locais & Estabilidade local, ressonância emocional \\
+Centralidade de Grau & Capacidade de influência direta & Velocidade de propagação emocional \\
+Centralidade de Intermediação & Controle do fluxo emocional & Poder de regulação coletiva \\
+Modularidade & Segregação de valores emocionais & Formação de subculturas emocionais \\
+Densidade & Conectividade emocional geral & Robustez do sistema, vulnerabilidade a epidemias emocionais \\
+Distribuição de Afinidade & Variação na qualidade das relações & Heterogeneidade na dinâmica emocional \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Aplicações Práticas}
+
+\begin{enumerate}
+\item \textbf{Diagnóstico de Saúde Coletiva}: Use as métricas para identificar:
+   \begin{itemize}
+   \item Isolamento social (baixa centralidade)
+   \item Polarização (alta modularidade)
+   \item Estresse sistêmico (baixo coeficiente de agrupamento)
+   \end{itemize}
+
+\item \textbf{Otimização de Intervenções}:
+   \begin{itemize}
+   \item Focar em indivíduos com alta centralidade para maximizar impacto
+   \item Fortalecer laços fracos para reduzir modularidade
+   \item Usar coeficiente de agrupamento para identificar grupos de apoio naturais
+   \end{itemize}
+
+\item \textbf{Predição de Dinâmica}:
+   \begin{itemize}
+   \item Prever propagação de estados emocionais usando o Laplaciano
+   \item Estimar tempo de recuperação usando autovalores
+   \item Detectar pontos críticos (indivíduos cuja remoção fragmenta a rede)
+   \end{itemize}
+\end{enumerate}
+
+\subsection{Perspectivas Futuras}
+
+\begin{itemize}
+\item \textbf{Redes Dinâmicas}: Como a estrutura da rede evolui com a dinâmica emocional
+\item \textbf{Redes Multilayer}: Múltiplos tipos de relações (família, amigos, trabalho)
+\item \textbf{Aprendizado de Máquina}: Estimação de parâmetros do PGDE a partir de dados de rede
+\item \textbf{Otimização de Políticas}: Como intervir para maximizar bem-estar coletivo
+\end{itemize}
+
+\section*{Apêndice: Implementação Matemática Completa}
+
+\subsection*{Derivação do Laplaciano Emocional}
+
+Dada a dinâmica linearizada:
+\[
+\frac{dx_i}{dt} = a_i x_i + \sum_{j=1}^n w_{ij}(x_j - x_i)
+\]
+Podemos escrever:
+\[
+\frac{dX}{dt} = A_{\text{diag}} X - L X
+\]
+onde $L = D - W$, com $D = \text{diag}(\sum_j w_{1j}, \dots, \sum_j w_{nj})$.
+
+\subsection*{Autovalores e Estabilidade}
+
+O sistema é estável se todos os autovalores de $(A_{\text{diag}} - L)$ têm parte real negativa. Como $L$ é semidefinida positiva, adicioná-la ao sistema tende a estabilizá-lo.
+
+\end{document}
