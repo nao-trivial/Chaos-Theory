@@ -23,7 +23,7 @@ class IntegralEstocastica:
 mu = 0.1
 sigma = 0.1
 x0 = 1.0
-t_grande = 1.0
+t_grande = 1.0 #mude e análise os tipos de gráficos 
 dt = 0.01
 
 # Cria uma instancia da classe IntegralEstocastica
