@@ -11,7 +11,9 @@ class ModelosCaos:
         n : int : número de iterações
         """
         x = np.zeros(n)
+
         x[0] = x0
+
         for i in range(1, n):
             x[i] = r * x[i - 1] * (1 - x[i - 1])
         return x
